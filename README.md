@@ -1,4 +1,6 @@
-# Meta Context Manager
+# ctxman
+
+*A CLI context manager. Name inspired by [envman](https://github.com/bitrise-io/envman).*
 
 # Overview
 
@@ -23,3 +25,4 @@ Wouldn’t it be nice if all of your environment variables could be inferred fro
 
 * **context** - an abstraction around a set of environments that define how you are able to interact with cloud resources through your command line
 * **scope** - a single component of a context, for example an AWS REGION, which may or may not comprise the entire context.
+
