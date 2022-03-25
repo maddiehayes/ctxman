@@ -1,0 +1,199 @@
+# default: ~/.config/.ctxman/config.yaml
+# default: ~/.config/.ctxman/contexts.yaml
+# switching contexts w.r.t. relationships between them
+# how leaky are they, how much do I care
+#
+#
+# This file favors short variable names where possible.
+apiVersion: v0.0.1-alpha
+current-context: obs.dev.us-east-1.cell-09
+contextNameFormat: ${workstream}.${environment}.${region}.${cell:-cluster}
+tools:
+  argocd:
+    contextNameFormat: ${workstream}.${environment}.${region}
+# Memorable scopes you will use to choose your meta-context.
+# TODO: Create a setter for each of these?
+scopes:
+  workstream:
+    parameter:
+      name: WORKSTREAM
+      # Sync function is used to dynamically generate or sync multiple 
+      # contexts based on some exteral script/file, etc.
+      generator:
+        kind: exec
+        parameters: |
+            mytool list workstreams --output text
+        # kind: list
+        # values:
+        #   - new
+        #   - legacy
+    description: An AWS account alias prefix.
+    environment:
+      name:
+        keys:
+          - WORKSTREAM
+        generator: {}
+      alias:
+        keys:
+          - SHORT_WORKSTREAM
+        generator: {}
+      awsAccountAlias:
+        dependsOn:
+          - scope: workstream
+            variable: name
+        keys:
+          - AWS_PROFILE_PREFIX
+        generator:
+          kind: map
+          parameters:
+            key:
+              scope: workstream
+              variable: name
+            map:
+              observability: cash-monitor
+  environment:
+    options:
+      - dev
+      - stage
+      - prod
+    description: The stage in the software release cycle, i.e. dev/stage/prod.
+    environment:
+      name:
+        keys:
+          - ENV
+          - SQM_ENV
+        # generator is responsible for how we create the value for the environment variable(s)
+        generator:
+          kind: options
+          parameters:
+            - dev
+            - stage
+            - prod
+      alias:
+        keys:
+          - SHORT_ENV
+        dependsOn:
+          - environment.name  # scope.environmentVariable
+        generator:
+          kind: map  # string[string] map
+          parameters:
+            map:
+              dev: development
+              stage: staging
+              prod: production
+  region:
+    description: The geographical area in which your cloud resources are hosted.
+    environment:
+      region:
+        keys:
+          - AWS_REGION
+          - SQM_REGION
+        generator:
+          kind: choice
+          parameters:
+            options:
+              - us-east-1
+              - us-east-2
+              - us-west-1
+              - us-west-2
+  cluster:
+    description: "Kubernetes cluster name."
+    dependsOn:
+      - environment
+      - workstream
+      - region
+    environment:
+      name:
+        keys:
+          - KUBE_CLUSTER
+        generator:
+          kind: exec
+          parameters: |
+            aws cli blah blah --output yaml
+      cell:
+        dependsOn:
+          - scope: cluster
+            variable: name
+          - scope: region
+            variable: name
+        keys:
+          - CELL
+        generator:
+          kind: regex
+          parameters:
+            regex: "/#{CLUSTER_NAME}-(\\w+)-#{REGION_NAME}/"
+  role:
+    dependsOn:
+      - environment
+      - workstream
+    environment:
+      name:
+        keys:
+          - ROLE
+        generator:
+          kind: stringJoin
+          parameters:
+            keys:
+
+
+# Values that are based on your scopes or other vars.
+values:
+  cell:
+    environment:
+      
+    aliases:
+     - CELL
+    dependsOn:
+      - scope.cluster
+      - scope.region
+      - scope.workstream
+    exec: sed $CLUTSER_NAME / 
+  awsAccount:
+    aliases:
+     - AWS_ACCOUNT
+    dependsOn:
+      - scope.environment
+      - scope.workstream
+  awsProfile:
+    dependsOn:
+      - var.awsAccount
+      - scope.role
+
+tools:
+  # gogok8s:
+  kubectx:
+    scopes:
+      - environment
+      - workstream
+      - region
+      - cluster
+  aws:
+    variables:
+      - environment
+      - workstream
+      - awsAccount:
+        exec: # grep through creds
+        # you want to ignore/only include certain ones, 
+        # do that in your own script
+      - region
+
+  argocd:
+    scopes:
+      - environment
+      - workstream
+      - region
+      - cluster
+  sqm:
+    scopes:
+      - environments:
+        required: true
+      - workstream:
+        required: true
+      - region:
+        required: true
+      - cluster:
+        required: false
+# ---
+# contexts.yaml
+contexts: {}
+awsAccounts: {}
