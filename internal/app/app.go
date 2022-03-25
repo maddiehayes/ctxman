@@ -47,12 +47,12 @@ func Run() error {
 		},
 		Flags: []cli.Flag{
 			&cli.StringFlag{
-				Name:        "config",
-				Aliases:     []string{"f"},
-				Usage:       "load configuration from `FILE`",
-				DefaultText: defaultCfgFile(),
-				TakesFile:   true,
-				Hidden:      true,
+				Name:      "config",
+				Aliases:   []string{"f"},
+				Usage:     "load configuration from `FILE`",
+				Value:     defaultCfgFile(),
+				TakesFile: true,
+				Hidden:    true,
 			},
 			&cli.BoolFlag{
 				Name:    "current",
@@ -69,8 +69,7 @@ func Run() error {
 func defaultCfgFile() string {
 	homeDir, err := os.UserHomeDir()
 	checkErr(err)
-	filepath.Join(homeDir, ".config", "ctxman", "config.yaml")
-	return homeDir
+	return filepath.Join(homeDir, ".config", "ctxman", "config.yaml")
 }
 
 // checkErr if an error is returned, logs the error and exists with error code
