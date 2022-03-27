@@ -25,21 +25,37 @@ func Run() error {
 		Name:  "ctx",
 		Usage: "Manage your shell environment context",
 		Before: func(c *cli.Context) error {
+			// Enable debug logs
+			if c.Bool("debug") {
+				log.SetLevel(log.DebugLevel)
+			}
+			// Load config file
 			cfgFile := c.String("config")
 			log.Debugf("using config file: %q\n", cfgFile)
 			viper.SetConfigFile(cfgFile)
 			cfg = &config.Config{}
-			checkErr(viper.ReadInConfig())
-			checkErr(viper.Unmarshal(cfg))
+			if err := viper.ReadInConfig(); err != nil {
+				log.Fatal(err)
+			}
+			if err := viper.Unmarshal(cfg); err != nil {
+				log.Fatal(err)
+			}
 			return cfg.Validate()
 		},
 		Action: func(c *cli.Context) error {
-			// If --current passed in, print the current context and exit
+			// If --current, print the current context and exit
 			if c.Bool("current") {
-				fmt.Println(context.Current())
+				ctx := context.Current()
+				if ctx != nil {
+					fmt.Println(*ctx)
+				} else {
+					log.Warn("no current context")
+				}
 				return nil
 			}
-			// Else, autofill context
+			// Else, use fzf to select context
+			// TODO: fzf select context
+			log.Debug("auto-complete to set current context")
 			return nil
 		},
 		Commands: []*cli.Command{
@@ -59,6 +75,10 @@ func Run() error {
 				Aliases: []string{"c"},
 				Usage:   "Print name of current context",
 			},
+			&cli.BoolFlag{
+				Name:  "debug",
+				Usage: "Enable debug logs",
+			},
 		},
 	}
 
@@ -68,13 +88,8 @@ func Run() error {
 // defaultCfgFile loads the user home directory
 func defaultCfgFile() string {
 	homeDir, err := os.UserHomeDir()
-	checkErr(err)
-	return filepath.Join(homeDir, ".config", "ctxman", "config.yaml")
-}
-
-// checkErr if an error is returned, logs the error and exists with error code
-func checkErr(msg interface{}) {
-	if msg != nil {
-		log.Fatal(msg)
+	if err != nil {
+		log.Fatal(err)
 	}
+	return filepath.Join(homeDir, ".config", "ctxman", "config.yaml")
 }

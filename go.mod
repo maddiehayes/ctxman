@@ -6,6 +6,7 @@ require (
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/viper v1.10.1
 	github.com/urfave/cli/v2 v2.4.0
+	golang.org/x/exp v0.0.0-20220325121720-054d8573a5d8
 )
 
 require (
