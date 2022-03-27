@@ -1,0 +1,38 @@
+# This example config only contains contexts. If you have a small number of static
+# contexts, this is the fastest way to get started.
+apiVersion: v0.0.1-alpha
+contexts:
+  - name: stream.dev.us-east-1.cell-09
+    environment:
+      CTX: stream.dev.us-east-1.cell-09
+      WORKSTREAM: streaming
+      SHORT_WORKSTREAM: stream
+      ENV: development
+      ORG_ENV: devel
+      SHORT_ENV: dev
+      ORG_REGION: us-east-1
+      REGION: us-east-1
+      AWS_REGION: us-east-1
+      AWS_IAM_ROLE: admin
+      ORG_ACCOUNT_ID: 123456789012
+      ACCOUNT_ID: 123456789012
+      AWS_PROFILE: org-streaming-development--admin
+      CLUSTER: org-streaming-cell-09-us-east-1
+      CELL: cell-09
+  - name: stream.dev.us-west-2.cell-17
+    environment:
+      CTX: stream.dev.us-west-2.cell-17
+      WORKSTREAM: streaming
+      SHORT_WORKSTREAM: stream
+      ENV: development
+      ORG_ENV: devel
+      SHORT_ENV: dev
+      ORG_REGION: us-west-2
+      REGION: us-west-2
+      AWS_REGION: us-west-2
+      AWS_IAM_ROLE: admin
+      ORG_ACCOUNT_ID: 123456789012
+      ACCOUNT_ID: 123456789012
+      AWS_PROFILE: org-streaming-development--admin
+      CLUSTER: org-streaming-cell-17-us-west-2
+      CELL: cell-17
