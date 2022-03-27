@@ -86,6 +86,10 @@ func Run() error {
 				Usage: "Enable debug logs",
 			},
 		},
+		// ExitErrHandler handles errors returned from any cli action
+		ExitErrHandler: func(context *cli.Context, err error) {
+			log.Fatal(err)
+		},
 	}
 
 	return app.Run(os.Args)
