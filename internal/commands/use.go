@@ -6,7 +6,6 @@ import (
 
 	"github.com/maddiehayes/ctxman/internal/config"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
 
@@ -33,7 +32,7 @@ var UseCmd = &cli.Command{
 		pretty := c.Bool("pretty")
 		ctx, err := config.FromAppContext(c).GetContext(ctxName)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 		// Print environment exports for the selected context
 		fmt.Println(ctx.GetEnvExports(pretty))
