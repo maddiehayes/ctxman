@@ -1,13 +1,13 @@
 package app
 
 import (
+	gocontext "context"
 	"fmt"
 	"os"
 	"path/filepath"
 
-	// "github.com/maddiehayes/ctxman/internal/commands"
-	// "github.com/spf13/viper"
 	"github.com/maddiehayes/ctxman/internal/commands"
+	"github.com/maddiehayes/ctxman/internal/commands/list"
 	"github.com/maddiehayes/ctxman/internal/config"
 	"github.com/maddiehayes/ctxman/internal/context"
 	log "github.com/sirupsen/logrus"
@@ -40,7 +40,12 @@ func Run() error {
 			if err := viper.Unmarshal(cfg); err != nil {
 				log.Fatal(err)
 			}
-			return cfg.Validate()
+			if err := cfg.Validate(); err != nil {
+				return err
+			}
+			// Add Config to context
+			c.Context = gocontext.WithValue(c.Context, config.CliContextKey, cfg)
+			return nil
 		},
 		Action: func(c *cli.Context) error {
 			// If --current, print the current context and exit
@@ -60,6 +65,7 @@ func Run() error {
 		},
 		Commands: []*cli.Command{
 			commands.UseCmd,
+			list.ListCmd,
 		},
 		Flags: []cli.Flag{
 			&cli.StringFlag{
