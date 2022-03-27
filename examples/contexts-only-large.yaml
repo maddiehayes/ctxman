@@ -2,9 +2,9 @@
 # contexts, this is the fastest way to get started.
 apiVersion: v0.0.1-alpha
 contexts:
-  - name: stream.dev.us-east-1.cell-09
+  - name: stream.dev.us-east-1.cell-09.admin
     environment:
-      CTX: stream.dev.us-east-1.cell-09
+      CTX: stream.dev.us-east-1.cell-09.admin
       WORKSTREAM: streaming
       SHORT_WORKSTREAM: stream
       ENV: development
@@ -19,9 +19,9 @@ contexts:
       AWS_PROFILE: org-streaming-development--admin
       CLUSTER: org-streaming-cell-09-us-east-1
       CELL: cell-09
-  - name: stream.dev.us-west-2.cell-17
+  - name: stream.dev.us-west-2.cell-17.admin
     environment:
-      CTX: stream.dev.us-west-2.cell-17
+      CTX: stream.dev.us-west-2.cell-17.admin
       WORKSTREAM: streaming
       SHORT_WORKSTREAM: stream
       ENV: development

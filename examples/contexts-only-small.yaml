@@ -1,0 +1,22 @@
+# This example config only contains contexts. If you have a small number of static
+# contexts, this is the fastest way to get started.
+apiVersion: v0.0.1-alpha
+contexts:
+  - name: work.dev.us-east-1.read-only
+    environment:
+      CTX: work.dev.us-east-1.read-only
+      ENV: development
+      SHORT_ENV: dev
+      REGION: us-east-1
+      AWS_REGION: us-east-1
+      ACCOUNT_ID: 123456789012
+      AWS_PROFILE: work--read-only
+  - name: work.dev.us-east-1.admin
+    environment:
+      CTX: work.dev.us-east-1.admin
+      ENV: development
+      SHORT_ENV: dev
+      REGION: us-east-1
+      AWS_REGION: us-east-1
+      ACCOUNT_ID: 123456789012
+      AWS_PROFILE: work--admin
