@@ -35,16 +35,16 @@ var ListContextsCmd = &cli.Command{
 			fmt.Println("no saved contexts")
 			return nil
 		}
-
-		currentCtx := context.Current()
-		if currentCtx != nil {
-			log.Debugf("current context: [%s]", *currentCtx)
-		}
-
-		// Begin generating table contents
 		contexts.SortByName()
 
-		// printLines := []string{}
+		// Just print one context name per line if only names requested
+		if c.Bool("names-only") {
+			fmt.Println(strings.Join(contexts.Names()[:], "\n"))
+			return nil
+		}
+
+		// Otherwise, generate table contents
+		currentCtx := context.Current()
 		out := printers.NewTabWriter(os.Stdout)
 		defer out.Flush()
 
@@ -53,14 +53,19 @@ var ListContextsCmd = &cli.Command{
 			log.Fatal(err)
 		}
 		for _, ctx := range config.FromAppContext(c).Contexts {
-			err = printContext(ctx, out, currentCtx)
-			if err != nil {
+			if err := printContext(ctx, out, currentCtx); err != nil {
 				log.Fatal(err)
 			}
 		}
 		return nil
 	},
 	ArgsUsage: "CONTEXT",
+	Flags: []cli.Flag{
+		&cli.BoolFlag{
+			Name:  "names-only",
+			Usage: "List only context names",
+		},
+	},
 }
 
 // printContextHeaders prints headers for the list contexts table

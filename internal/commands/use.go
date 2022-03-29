@@ -15,7 +15,7 @@ var UseCmd = &cli.Command{
 	Flags: []cli.Flag{
 		&cli.BoolFlag{
 			Name:  "pretty",
-			Usage: "Pretty-print environment variables to be set for context",
+			Usage: "Print one export statment per line for human readability",
 		},
 	},
 	Before: func(c *cli.Context) error {

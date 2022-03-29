@@ -33,6 +33,14 @@ func (c Contexts) SortByName() {
 	sort.Sort(NameSorter(c))
 }
 
+func (c Contexts) Names() []string {
+	names := make([]string, len(c))
+	for idx, ctx := range c {
+		names[idx] = *ctx.Name
+	}
+	return names
+}
+
 // Current returns the name of the current context based on the current value
 // of the .environment variable
 func Current() *string {

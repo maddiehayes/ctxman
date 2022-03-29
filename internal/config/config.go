@@ -4,6 +4,8 @@ package config
 import (
 	"errors"
 	"fmt"
+	"os"
+	"path/filepath"
 
 	"github.com/maddiehayes/ctxman/internal/context"
 	log "github.com/sirupsen/logrus"
@@ -14,9 +16,18 @@ const (
 	CliContextKey string = "config"
 )
 
+func DefaultFilePath() string {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return filepath.Join(homeDir, ".config", "ctxman", "config.yaml")
+}
+
 type Config struct {
-	ApiVersion *string          `yaml:"apiVersion"` // validate:"required"
-	Contexts   context.Contexts `yaml:"contexts"`
+	ApiVersion    *string          `yaml:"apiVersion"` // validate:"required"
+	Contexts      context.Contexts `yaml:"contexts"`
+	VariableNames []string         `yaml:"variableNames"`
 }
 
 // Validate performs validation on the app config
@@ -28,6 +39,8 @@ func (c *Config) Validate() error {
 		return fmt.Errorf("unknown api version: %s", *c.ApiVersion)
 	}
 	log.Debugf("current version: %s", *c.ApiVersion)
+	log.Debugf("contexts: %s", c.Contexts.Names())
+	log.Debugf("variable names: %s", c.VariableNames)
 	return nil
 }
 
