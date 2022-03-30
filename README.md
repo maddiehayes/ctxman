@@ -97,25 +97,27 @@ ctx describe scope legacy.prod.us-east-1.eks-cluster
 ctx list contexts
 ```
 
-# Syncing all contexts vs. assuming a context
+# TODO: 
 
-# Generating new contexts based on your
+- Syncing all contexts vs. assuming a context
+- Generating new contexts based on your
 
 # Development
-- setup, use context, list contexts, describe context, list scopes, describe scope
-  - create a dumb sample config file, and be able to load it.
-- could start with a `ctx test` command just to test setting environment variables
-
-```
-# Print environment variables that need to be set
-ctx test
-```
-
-Adds to shell file
+Add to shell file:
 ```sh
 # CTXMAN BEGIN
-# `ctx` alias allows your shell to export environment variables specified by ctxman when calling
-# the use command by executing the command output.
-alias ctx="if [ $# -eq 0 ] || [[ "$1" =~ ^(list|get|describe|sync|other|verbs)$ ]]; then $($@); else $@"
+function ctxman_exe() { cd $HOME/Development/ctxman && go run cmd/main.go $@; }
+function ctx() {
+  local stdout
+  # Save stdout to var (stderr is unaffected)
+  stdout=$(ctxman_exe $@)
+  # Print everything but the export lines
+  echo $stdout | grep --invert-match -e '^export ' -e '^unset '
+  # Execute the export lines
+  export_statements=$(echo $stdout | grep -e '^export ' -e '^unset ')
+  while IFS= read -r line ; do 
+    eval $line; 
+  done <<< "$export_statements"
+}
 # CTXMAN END
 ```
