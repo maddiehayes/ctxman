@@ -1,0 +1,11 @@
+apiVersion: v0.0.1-alpha
+scopes:
+  - name: workstream
+    description: The name of the owning team or workload.
+    parameter:
+      name: WORKSTREAM
+      # This generator function is used to dynamically generate or sync contexts.
+      generator:
+        kind: exec
+        parameters:
+          command: ["yq","'.workstreams[].name'",  "$HOME/.config/ctxman/scopes.yaml"]
