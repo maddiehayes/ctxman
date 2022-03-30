@@ -8,6 +8,9 @@ import (
 	"path/filepath"
 
 	"github.com/maddiehayes/ctxman/internal/context"
+	"github.com/maddiehayes/ctxman/internal/scope"
+
+	// "github.com/maddiehayes/ctxman/internal/scope"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
@@ -26,6 +29,7 @@ func DefaultFilePath() string {
 
 type Config struct {
 	ApiVersion    *string          `yaml:"apiVersion"` // validate:"required"
+	Scopes        scope.Scopes     `yaml:"scopes"`
 	Contexts      context.Contexts `yaml:"contexts"`
 	VariableNames []string         `yaml:"variableNames"`
 }
@@ -40,7 +44,11 @@ func (c *Config) Validate() error {
 	}
 	log.Debugf("current version: %s", *c.ApiVersion)
 	log.Debugf("contexts: %s", c.Contexts.Names())
-	log.Debugf("variable names: %s", c.VariableNames)
+	log.Debugf("variables: %s", c.VariableNames)
+	log.Debugf("Scope.Name: %s", *c.Scopes[0].Description)
+	log.Debugf("Scope.Description: %s", *c.Scopes[0].Name)
+	log.Debugf("Scope.ParameterName: %s", *c.Scopes[0].Parameter.Name)
+	log.Debugf("Scope.ParameterGenerator: %+v", *&c.Scopes[0].Parameter.Generator.Value)
 	return nil
 }
 
